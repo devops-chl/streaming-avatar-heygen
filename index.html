@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Choctaw Casinos Art Hike Interactive</title>
+<link rel="stylesheet" href="https://use.typekit.net/ssw8dtq.css">
+<style>
+    html, body {
+        margin: 0;
+        width: 1080px; /* Set to your specific viewport width */
+        height: 1920px; /* Set to your specific viewport height */
+        overflow: hidden; /* Prevent scrolling */
+        font-family: gill-sans-nova, sans-serif;
+        font-weight: 500;
+        font-style: normal;
+        font-family: gill-sans-nova, sans-serif;
+        font-weight: 500;
+        font-style: italic;
+        background-color: #f1ecdb;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 1920px; /* Full height of the viewport */
+    }
+    .content {
+        flex: 1;
+    }
+    .content span {
+        font-size: 80px;
+    }
+    .content div#screen-size {
+        font-size: 80px;
+        width: 100%;
+    }
+    .footer {
+        height: 350px; /* Footer height set as requested */
+        background-image: url( assets/img/background.svg );
+        background-size: cover;
+        text-align: center;
+        padding: 0;
+        overflow: hidden;
+        /* z-index: 200; */
+        position:absolute;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+    }
+    .footer svg {
+        height: 125px; /* Set the size of the SVG icon */
+    }
+    .footer.listening {
+        background-image: url( assets/img/background-listening.svg );
+    }
+    .footer-row {
+        display: flex;
+        white-space: nowrap;
+        align-items: center;
+        font-size: 80px;
+        flex-direction: column;
+        justify-content: space-between; /* Evenly distribute space */    
+        color: white;
+        margin-top: 83px;
+    }
+    #footerText {
+        font-family: "trajan-sans-pro", sans-serif;
+        font-size: 40px;
+        font-style: normal;
+        margin-top: -60px;
+    }
+
+    .footer-row:first-child {
+        margin-top: 123px; /* Additional space between the rows */
+    }
+    .footer .status-icon,
+    .footer.waiting .status-icon {
+        width: 125px;
+        height: 125px;
+        background-image: url( assets/img/idle.gif );
+        background-size: cover;
+        text-align: center;
+        margin-top: -52px;
+    }
+    .footer.speaking .status-icon {
+        background-image: url( assets/img/speaking.gif );
+        margin-top: 0px;
+    }
+    .footer.listening .status-icon {
+        background-image: url( assets/img/listening.gif );
+    }
+    .videoSectionWrap .hide {
+        display: none;
+    }
+
+    .videoSectionWrap .show {
+        display: flex;
+    }
+
+    .hide {
+        display: none;
+    }
+    .show {
+        display: flex;
+    }
+    #videoPlayer{
+        height: 300px;
+    }
+
+    #videoWrapper {
+        display: none;
+    }    
+    #videoPlayer {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        /* z-index: 100; */
+    }        
+    video::-webkit-media-controls {
+        display: none;
+    }
+    .videoSectionWrap {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        /* height: 100vh;             */
+    }
+    #recordTest,
+    #inputStatus {
+        z-index: 1000;
+        position: absolute;
+        font-size: 120px;
+        margin: 80px;
+    }
+    #recordBtn,
+    #toggleButton {
+        height: 100px;
+        font-size: 48px;
+        background-color: black;
+        color: white;
+        width: 100%;
+        margin: 20px;
+        display: none;
+    }
+    .fade-out-text {
+        animation: fadeOut 3s forwards;
+    }
+
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }  
+    #screensaver {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('assets/img/homepage_background.jpg') no-repeat center center;
+        background-size: cover;
+        z-index: 2000;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;        
+    }    
+    #screensaver h2 {
+        margin: 0;
+        font-size: 160px;
+        text-align: center;
+        color: white;
+        z-index: 1;
+        position: absolute;
+        bottom: 20px;
+        width: 100%;        
+    }
+    #screensaver video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+    }    
+</style>
+</head>
+<body>
+<div id="screensaver">
+    <video id="screensaver-video" src="videos/arthikeloop.webm" type="video/webm" muted loop></video>
+    <!-- <h2>Tap to begin</h2> -->
+</div>
+<div class="container">
+  <div class="content" id="content">
+    <!-- Main content goes here -->
+    <button id="toggleButton">Touch to start</button>
+    <button id="recordBtn">Record</button>
+    <div id="screen-size"></div>
+    <!-- <span>Be sure to set<br/> your screen<br/> dimensions to<br/> 1080 x 1920</span> -->
+    <p id="recordTest"></p>
+    <div class="videoSectionWrap" id="videoWrapper">
+        <p id="inputStatus"></p>
+        <video id="videoPlayer" controls="false">
+            <source src="videos/AA.webm" type="video/webm" id="videoSource">
+            Your browser does not support the video tag.
+        </video>      
+        <div class="listener" id="listenerStatus"></div>
+
+        <div class="actionRow switchRow hide" id="bgCheckboxWrap">
+        <div class="switchWrap">
+            <span>Remove background</span>
+            <label class="switch">
+            <input type="checkbox" id="removeBGCheckbox" />
+            <span class="slider round"></span>
+            </label>
+        </div>
+
+        <label>
+            Background (CSS)
+            <input
+            type="text"
+            id="bgInput"
+            value='url("https://app.heygen.com/icons/heygen/logo_hori_text_light_bg.svg") center / contain no-repeat'
+            />
+        </label>
+        </div>
+    </div>
+</div>
+  <footer class="footer waiting" id="footer-area">
+    <div class="footer-row">
+        <div class="status-icon speaking" id="action-button"></div>
+      <!-- <svg viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-8-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+      </svg> -->
+    </div>
+    <div class="footer-row">
+      <span id="footerText"><i>Tap microphone to chat</i></span>
+    </div>
+  </footer>
+</div>
+</body>
+<script type="module" src="demo3.js"></script>
+</html>

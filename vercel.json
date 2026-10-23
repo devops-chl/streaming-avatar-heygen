@@ -1,0 +1,35 @@
+{
+    "version": 2,
+    "rewrites": [
+        {
+            "source": "/api/transcribe",
+            "destination": "/api/transcribe.js"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/api"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/openai/complete",
+            "headers": [
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "http://localhost:3000"
+                }
+            ]
+        }
+    ],
+    "builds": [
+        {
+          "src": "package.json",
+          "use": "@vercel/static-build",
+          "config": { "outputDirectory": "." }
+        },
+        {
+          "src": "api/transcribe.js",
+          "use": "@vercel/node"
+        }
+    ]    
+}

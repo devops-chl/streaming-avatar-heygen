@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="icon" href="./favicon.ico" />
+  </head>
+
+  <body>
+    <div class="main">
+      <div class="actionRowsWrap">
+        <div style="padding:177.78% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/942367568?h=20c12fe62c&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;autoplay=1&amp;loop=1&amp;autopause=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Art Hike Proto Digital Twin Loop"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+          <div class="videoWrap">
+            <video id="mediaElement" class="videoEle show" autoplay></video>
+            <canvas id="canvasElement" class="videoEle hide"></canvas>
+          </div>
+
+          <p id="status"></p>
+          
+          <div class="actionRow switchRow hide" id="bgCheckboxWrap">
+            <div class="switchWrap">
+              <span>Remove background</span>
+              <label class="switch">
+                <input type="checkbox" id="removeBGCheckbox" />
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+          </div>
+          <label>
+            Background (CSS)
+            <input
+              type="text"
+              id="bgInput"
+              value='url("https://app.heygen.com/icons/heygen/logo_hori_text_light_bg.svg") center / contain no-repeat'
+            />
+          </label>
+        <div class="actionRow">
+          <p>Step 1: Tap 'New'</p>
+          <p>Step 2: Tap 'Start'</p>
+        </div>
+        <div class="actionRow">
+          <label>
+            AvatarID
+            <input id="avatarID" type="text" />
+          </label>
+
+          <label>
+            VoiceID
+            <input id="voiceID" type="text" />
+          </label>
+
+          <button id="newBtn">New</button>
+          <button id="startBtn">Start</button>
+          <button id="closeBtn">Close</button>
+        </div>
+
+        <div class="actionRow">
+          <p>Step 3: Enter your message in the text box</p>
+          <p>Step 4: Tap 'Talk'</p>
+        </div>
+        <div class="actionRow">
+          <label>
+            Message
+            <input id="taskInput" type="text" />
+          </label>
+          <!-- <button id="repeatBtn">Repeat</button> -->
+          <button id="talkBtn">Talk</button>
+        </div>
+        <div class="actionRow">
+          <p>Beta: Tap 'Record' to speak</p>
+          <button id="recordBtn">Record</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="index.js"></script>
+  </body>
+</html>
