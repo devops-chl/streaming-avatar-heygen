@@ -196,10 +196,11 @@ async function recordAndTranscribe() {
 }
 
 // Whisper invents text from silence and background noise (e.g. "Thank you for watching."),
-// so treat the clip as silence when every segment is more likely no speech than speech
+// so treat the clip as silence when every segment's no-speech score is high. On site, silent
+// taps scored 0.54-0.57 with casino noise and real questions scored 0.01-0.06.
 function isNoSpeech(responseData) {
   const segments = responseData.segments || [];
-  return segments.length === 0 || segments.every(segment => segment.no_speech_prob > 0.6);
+  return segments.length === 0 || segments.every(segment => segment.no_speech_prob > 0.3);
 }
 
 document.querySelector('#recordBtn').addEventListener('click', recordAndTranscribe);
