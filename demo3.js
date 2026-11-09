@@ -149,42 +149,57 @@ async function recordAndTranscribe() {
     };
 
     mediaRecorder.onstop = async function () {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' }); // Assuming Whisper API accepts MPEG audio format
-      const formData = new FormData();
-      formData.append('file', audioBlob, 'audio.mp3');
-      formData.append('model', 'whisper-1');
+      stream.getTracks().forEach(track => track.stop()); // Release the microphone
+      try {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' }); // Assuming Whisper API accepts MPEG audio format
+        const formData = new FormData();
+        formData.append('file', audioBlob, 'audio.mp3');
+        formData.append('model', 'whisper-1');
+        formData.append('response_format', 'verbose_json'); // Includes per-segment no-speech scores
 
-      // Send the audio file to the server, which adds the OpenAI API key
-      const response = await fetch('/api/transcribe', {
-        method: 'POST',
-        body: formData,
-      });
+        // Send the audio file to the server, which adds the OpenAI API key
+        const response = await fetch('/api/transcribe', {
+          method: 'POST',
+          body: formData,
+        });
 
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log('Whisper API Transcription:' + responseData.text); // Log the response data
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log('Whisper API Transcription:' + responseData.text); // Log the response data
 
-        if (responseData.text && responseData.text.length > 0) {
-          const transcription = responseData.text; // Get text from transcription
-          //recordTest.innerHTML = transcription;
-          console.log('Audio transcribed successfully');
-          handleVideoSelection(transcription);
-          // Automatically submit the form
-          //document.querySelector('#talkBtn').click(); // Triggers the form submission
+          if (responseData.text && responseData.text.length > 0 && !isNoSpeech(responseData)) {
+            const transcription = responseData.text; // Get text from transcription
+            //recordTest.innerHTML = transcription;
+            console.log('Audio transcribed successfully');
+            handleVideoSelection(transcription);
+            // Automatically submit the form
+            //document.querySelector('#talkBtn').click(); // Triggers the form submission
+            return;
+          }
+          console.log('No speech detected');
         } else {
-          console.log('No transcription received from OpenAI');
+          console.log('Error fetching transcription');
         }
-      } else {
-        console.log('Error fetching transcription');
+      } catch (error) {
+        console.error('Error transcribing audio:', error);
       }
+      // Nothing usable was heard, so let the visitor try again
+      footerStatus('waiting', 'Tap to chat');
     };
 
     mediaRecorder.start();
     setTimeout(() => mediaRecorder.stop(), 3000); // Record for 5 seconds
   } catch (error) {
     console.error('Error recording audio:', error);
-    updateStatus(statusElement, 'Error recording audio');
+    footerStatus('waiting', 'Tap to chat');
   }
+}
+
+// Whisper invents text from silence and background noise (e.g. "Thank you for watching."),
+// so treat the clip as silence when every segment is more likely no speech than speech
+function isNoSpeech(responseData) {
+  const segments = responseData.segments || [];
+  return segments.length === 0 || segments.every(segment => segment.no_speech_prob > 0.6);
 }
 
 document.querySelector('#recordBtn').addEventListener('click', recordAndTranscribe);
